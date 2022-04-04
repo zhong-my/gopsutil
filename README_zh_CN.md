@@ -1,50 +1,45 @@
-# gopsutil: psutil for golang（[中文翻译在这里](./README_zh_CN.md)）
+# gopsutil: Go 实现的 psutil
 
 [![Test](https://github.com/shirou/gopsutil/actions/workflows/test.yml/badge.svg)](https://github.com/shirou/gopsutil/actions/workflows/test.yml) [![Coverage Status](https://coveralls.io/repos/github/shirou/gopsutil/badge.svg?branch=master)](https://coveralls.io/github/shirou/gopsutil?branch=master) [![Go Reference](https://pkg.go.dev/badge/github.com/shirou/gopsutil.svg)](https://pkg.go.dev/github.com/shirou/gopsutil)
 
-This is a port of psutil (https://github.com/giampaolo/psutil). The
-challenge is porting all psutil functions on some architectures.
+这是对 psutil 代码的移植 (https://github.com/giampaolo/psutil)，项目是挑战在多个架构中移植所有 psutil 函数。
 
-## v3 migration
+## v3 迁移
 
-from v3.20.10, gopsutil becomes v3 which breaks backwards compatibility.
-See [v3Changes.md](_tools/v3migration/v3Changes.md) more detail changes.
+从 v3.20.10 开始, gopsutil v3 版本破坏了向后兼容。具体看 [v3Changes.md](_tools/v3migration/v3Changes.md) 文件。
 
-## Tag semantics
+## 版本号
 
-gopsutil tag policy is almost same as Semantic Versioning, but
-automatically increase like Ubuntu versioning.
+gopsutil 的版本策略和大多数一样，但是自增长的版本号和 Ubuntu 类似。
 
-for example, v2.17.04 means
+例如，v2.17.04 的意思是
 
-- v2: major version
-- 17: release year, 2017
-- 04: release month
+- v2: 主要版本号
+- 17: 发布年份
+- 04: 发布月份
 
-gopsutil aims to keep backwards compatibility until major version change.
+gopsutil 旨在保持向后兼容，直到版本发生重大变化。
 
-Tagged at every end of month, but if there are only a few commits, it
-can be skipped.
+每月会更新版本号，但若只有少数提交，那么通常会被忽略。
 
-## Available Architectures
+## 支持的架构
 
 - FreeBSD i386/amd64/arm
 - Linux i386/amd64/arm(raspberry pi)
 - Windows i386/amd64/arm/arm64
 - Darwin i386/amd64
-- OpenBSD amd64 (Thank you @mpfz0r!)
-- Solaris amd64 (developed and tested on SmartOS/Illumos, Thank you
+- OpenBSD amd64 (感谢 @mpfz0r!)
+- Solaris amd64 (由 SmartOS/Illumos 开发和测试, 感谢
   @jen20!)
 
-These have partial support:
+还有部分支持:
 
-- CPU on DragonFly BSD (#893, Thank you @gballet!)
-- host on Linux RISC-V (#896, Thank you @tklauser!)
+- CPU on DragonFly BSD (#893, 感谢 @gballet!)
+- host on Linux RISC-V (#896, 感谢 @tklauser!)
 
-All works are implemented without cgo by porting C structs to golang
-structs.
+所有工作都是在没有 cgo 的情况下将 C 结构移植到 Golang 结构来实现的。
 
-## Usage
+## 使用
 
 ```go
 package main
@@ -53,58 +48,50 @@ import (
     "fmt"
 
     "github.com/shirou/gopsutil/v3/mem"
-    // "github.com/shirou/gopsutil/mem"  // to use v2
+    // "github.com/shirou/gopsutil/mem"  // 使用 v2 版本
 )
 
 func main() {
     v, _ := mem.VirtualMemory()
 
-    // almost every return value is a struct
+    // 几乎所有返回值都是结构体类型
     fmt.Printf("Total: %v, Free:%v, UsedPercent:%f%%\n", v.Total, v.Free, v.UsedPercent)
 
-    // convert to JSON. String() is also implemented
+    // 转换为 JSON.String() 也是允许的
     fmt.Println(v)
 }
 ```
 
-The output is below.
+下面是输出：
 
     Total: 3179569152, Free:284233728, UsedPercent:84.508194%
     {"total":3179569152,"available":492572672,"used":2895335424,"usedPercent":84.50819439828305, (snip...)}
 
-You can set an alternative location to `/proc` by setting the `HOST_PROC`
-environment variable.
+你可以通过设定 `HOST_PROC` 环境变量来为 `/proc` 设置一个替代位置。
 
-You can set an alternative location to `/sys` by setting the `HOST_SYS`
-environment variable.
+你可以通过设定 `HOST_SYS` 环境变量来为 `/sys` 设置一个替代位置。
 
-You can set an alternative location to `/etc` by setting the `HOST_ETC`
-environment variable.
+你可以通过设定 `HOST_ETC` 环境变量来为 `/etc` 设置一个替代位置。
 
-You can set an alternative location to `/var` by setting the `HOST_VAR`
-environment variable.
+你可以通过设定 `HOST_VAR` 环境变量来为 `/var` 设置一个替代位置。
 
-You can set an alternative location to `/run` by setting the `HOST_RUN`
-environment variable.
+你可以通过设定 `HOST_RUN` 环境变量来为 `/var` 设置一个替代位置。
 
-You can set an alternative location to `/dev` by setting the `HOST_DEV`
-environment variable.
+你可以通过设定 `HOST_DEV` 环境变量来为 `/dev` 设置一个替代位置。
 
-You can set an alternative location to `/proc/N/mountinfo` by setting the
-`HOST_PROC_MOUNTINFO` environment variable.
+你可以通过设定 `HOST_PROC_MOUNTINFO` 环境变量来为 `/proc/N/mountinfo` 设置一个替代位置。
 
-## Documentation
+## 文档
 
-see http://godoc.org/github.com/shirou/gopsutil
+具体看这里 http://godoc.org/github.com/shirou/gopsutil
 
-## Requirements
+## 要求
 
-- go1.16 or above is required.
+- 支持 go1.16 或更新的版本。
 
-## More Info
+## 更多信息
 
-Several methods have been added which are not present in psutil, but
-will provide useful information.
+增加了一些 psutil 中没有的方法，下面提供了这些方法的信息。
 
 - host/HostInfo() (linux)
   - Hostname
@@ -151,12 +138,12 @@ will provide useful information.
   - system wide stats on netfilter conntrack module
   - sourced from /proc/sys/net/netfilter/nf_conntrack_count
 
-Some code is ported from Ohai. many thanks.
+有些代码是从 Ohai 移植来的，非常感谢。
 
-## Current Status
+## 当前状态
 
-- x: works
-- b: almost works, but something is broken
+- x: 能工作
+- b: 也能工作，但会出问题
 
 |name                  |Linux  |FreeBSD  |OpenBSD  |macOS   |Windows  |Solaris  |Plan 9   |
 |----------------------|-------|---------|---------|--------|---------|---------|---------|
@@ -181,7 +168,7 @@ Some code is ported from Ohai. many thanks.
 |netfilter\_conntrack  |x      |         |         |        |         |         |         |
 
 
-### Process class
+### 进程类
 
 |name                |Linux  |FreeBSD  |OpenBSD  |macOS  |Windows  |
 |--------------------|-------|---------|---------|-------|---------|
@@ -225,7 +212,7 @@ Some code is ported from Ohai. many thanks.
 |is\_running         |       |         |         |       |         |
 |page\_faults        |x      |         |         |       |         |
 
-### Original Metrics
+### 原始指标
 
 |item             |Linux  |FreeBSD  |OpenBSD  |macOS   |Windows |Solaris  |
 |-----------------|-------|---------|---------|--------|--------|---------|
@@ -266,13 +253,13 @@ Some code is ported from Ohai. many thanks.
     - as_dict
     - wait
 
-## License
+## 开源协议
 
-New BSD License (same as psutil)
+New BSD License (与 psutil 一致)
 
-## Related Works
+## 相关作品
 
-I have been influenced by the following great works:
+我受到了以下伟大作品的影响：
 
 - psutil: https://github.com/giampaolo/psutil
 - dstat: https://github.com/dagwieers/dstat
@@ -285,13 +272,13 @@ I have been influenced by the following great works:
 - mackerel:
   https://github.com/mackerelio/mackerel-agent/tree/master/metrics
 
-## How to Contribute
+## 如何贡献
 
-1.  Fork it
-2.  Create your feature branch (git checkout -b my-new-feature)
-3.  Commit your changes (git commit -am 'Add some feature')
-4.  Push to the branch (git push origin my-new-feature)
-5.  Create new Pull Request
+1.  Fork 它
+2.  创建一个新的分支 (git checkout -b my-new-feature)
+3.  提交你的更改 (git commit -am 'Add some feature')
+4.  推送到新分支上 (git push origin my-new-feature)
+5.  创建一个新的 PR（Pull Request）
 
 English is not my native language, so PRs correcting grammar or spelling
 are welcome and appreciated.
